@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import alanBtn from '@alan-ai/alan-sdk-web';
-import wordsToNumbers from 'words-to-numbers';
-import NewsCards from './components/NewsCards/NewsCards';
-import useStyles from './styles.js';
-require('dotenv/config');
-const alanKey= 'your_api_key_here';
+import React, { useState, useEffect } from "react";
+import alanBtn from "@alan-ai/alan-sdk-web";
+import wordsToNumbers from "words-to-numbers";
+import NewsCards from "./components/NewsCards/NewsCards";
+import useStyles from "./styles.js";
+import ReactLogo from "./react-1.png";
+import "./App.css";
+require("dotenv/config");
+const alanKey = process.env.alanKey;
 
 const App = () => {
   const [newsArticles, setNewsArticles] = useState([]);
@@ -14,33 +16,36 @@ const App = () => {
     alanBtn({
       key: alanKey,
       onCommand: ({ command, articles, number }) => {
-        if(command === 'newHeadlines'){
-        setNewsArticles(articles);
-        setActiveArticle(-1);
-        } else if(command === 'highlight') {
+        if (command === "newHeadlines") {
+          setNewsArticles(articles);
+          setActiveArticle(-1);
+        } else if (command === "highlight") {
           setActiveArticle((prevActiveArticle) => prevActiveArticle + 1);
-        } else if(command === 'open') {
-          const parsedNumber = number.length > 2 ? wordsToNumbers(number, { fuzzy: true }) : number;
+        } else if (command === "open") {
+          const parsedNumber =
+            number.length > 2
+              ? wordsToNumbers(number, { fuzzy: true })
+              : number;
           const article = articles[parsedNumber - 1];
-          if(parsedNumber > 20) {
-            alanBtn().playText('Please try that again.');
-          }else if(article) {
-          window.open(article.url, '_blank');
-          alanBtn().playText('Opening...');
+          if (parsedNumber > 20) {
+            alanBtn().playText("Please try that again.");
+          } else if (article) {
+            window.open(article.url, "_blank");
+            alanBtn().playText("Opening...");
           }
         }
-      }
-    })
-  }, [])
+      },
+    });
+  }, []);
 
   return (
     <div key={"alan"}>
       <div className={classes.logoContainer}>
-        <img src="https://alan.app/voice/images/previews/preview.jpg" className={classes.alanLogo} alt="alan logo" />
+        <img src={ReactLogo} className="reactLogo" alt="react logo" />
       </div>
       <NewsCards articles={newsArticles} activeArticle={activeArticle} />
     </div>
   );
-}
+};
 
 export default App;
